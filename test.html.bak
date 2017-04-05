@@ -1,0 +1,106 @@
+<html>  
+  <head>  
+    <title>QR-Code Clock</title>
+
+    <script src="JsBarcode.all.min.js"></script>
+    <script src="qrcode.min.js"></script>
+    <script type="text/javascript">
+			  var codeCount = 0; 
+				var addCode = function(){
+					  var img;
+					  var div = document.createElement("div");
+					  var txtTitle = document.createElement("div");
+					  var txtCode = document.createElement("div");
+					  var p = document.createTextNode("北京石化A仓库");
+					  var selector = document.getElementById("codeTypeSelector");
+					  if(selector.options[selector.options.selectedIndex].value === "1"){
+					    img = document.createElement("img");
+					  }else{
+					    img = document.createElement("div");
+					  }
+					  document.getElementById("CodeContent").appendChild(div);
+					  txtTitle.appendChild(p);	
+					  txtTitle.style = "color:black;font-size:9px;font-weight:bold;"
+					  txtTitle.style.textAlign = "center";
+					  div.id = "code_" + codeCount;
+					  div.style.width = 145;
+					  img.id = "img_" + codeCount;
+					  img.style.width = 145;
+					  txtCode.style = "color:black;font-size:7px;font-weight:bold;"
+					  txtCode.style.textAlign = "center";
+					  div.appendChild(txtTitle);
+					  div.appendChild(img);
+					  div.appendChild(txtCode);
+					  codeCount++;
+					  
+					  if(selector.options[selector.options.selectedIndex].value === "1"){
+					  	makeBarCode("1234567890A" + codeCount, img);
+					  	var pCode = document.createTextNode("1234567890A" + codeCount);
+					  	txtCode.appendChild(pCode);	
+					  }else{
+					  	makeQRCode("1234567890ABCDF" + codeCount, img);
+					  }
+				};  
+	  
+				var removeAllCode = function(){
+					var codeContent = document.getElementById("CodeContent");
+				  for(i=0; i < codeCount; i++){
+				    var div=document.getElementById("code_" + i);    
+				    codeContent.removeChild(div);  
+				  }  
+				  codeCount = 0;  
+				};  
+				
+				var printCode = function(){
+					var oldHtml = window.document.body.innerHTML;
+					var bdhtml=window.document.body.innerHTML; 
+					var sprnstr="<!--startprint-->"; 
+					var eprnstr="<!--endprint-->"; 
+					var prnhtml=bdhtml.substr(bdhtml.indexOf(sprnstr)+18); 
+					var prnhtml=prnhtml.substring(0,prnhtml.indexOf(eprnstr)); 
+					window.document.body.innerHTML=prnhtml; 
+					window.print(); 
+					window.document.body.innerHTML=oldHtml;
+					return true;
+				};
+				
+				function makeBarCode(code, container){
+					JsBarcode("#" + container.id, code, {
+						height:55,
+						width:2,
+						textMargin:2,
+						margin:5,
+						displayValue: false
+						});
+				}
+				
+				function makeQRCode(code, container) {		
+					var qrcode = new QRCode(container, {
+						width : 100,
+						height : 100
+					});
+					qrcode.makeCode(code);
+				}
+    </script>
+  </head>  
+  <body>
+	  	<div>
+		  	<input type="button" onclick="addCode();" value="Add"/>  
+		    <input type="button" onclick="removeAllCode();" value="Remove all"/>
+		    <span>编码类型:</span>
+        	<td>
+          	<select id="codeTypeSelector">
+            	<option value="1" selected="selected">一维码</option>
+            	<option value="2">二维码</option>
+            </select>
+         </td>
+	    </div>
+	    <div>
+    		<input type="button" onclick="printCode();" value="print"/>
+    	</div>
+    	<!--startprint-->
+    	<div id="CodeContent">
+      </div>
+      <!--endprint-->
+  </body>  
+</html>  
